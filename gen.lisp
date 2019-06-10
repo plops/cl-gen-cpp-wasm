@@ -17,7 +17,18 @@ cl-gen-cpp-wasm
 		     (user-homedir-pathname)))
   (let* ((code
 	  `(with-compilation-unit
-	       ;(include <stdio.h>)
+					;(include <stdio.h>)
+
+	       (raw "extern unsigned char __heap_base;")
+
+	     (decl ((g_bump_pointer :type "unsigned int"
+				    :init &__heap_base)))
+	     (function (malloc ((n :type int))
+			       void*)
+		       (let ((r :type "unsigned int" :init g_bump_pointer)
+			     )
+			 (setf bump_pointer (+ bump_pointer n))
+			 (return (cast void* r))))
 	     
 	     (function (foo ((a :type int)
 			     (b :type int))
