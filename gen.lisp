@@ -26,4 +26,7 @@ cl-gen-cpp-wasm
 	     )))
     (write-source *main-cpp-filename* "c" code)))
 ;; clang --target=wasm32 -emit-llvm -c -S wasm_01.c
+;; llc -march=wasm32 -filetype=obj wasm_01.ll 
+;; sudo pacman -S wabt
+;; wasm-objdump -x wasm_01.o
 
