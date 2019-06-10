@@ -9,3 +9,12 @@ void *malloc(int n) {
   }
 }
 int foo(int a, int b) { return (b + (2 * a * a)); }
+int sum(int *a, int len) {
+  {
+    int sum = 0;
+    for (int i = 0; (i < len); i += 1) {
+      sum = (sum + a[i]);
+    }
+    return sum;
+  }
+}

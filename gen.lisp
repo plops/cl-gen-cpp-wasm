@@ -83,7 +83,14 @@
 	     (function (foo ((a :type int)
 			     (b :type int))
 			    int)
-		       (return (+ b (* 2 a a)))))))
+		       (return (+ b (* 2 a a))))
+	     (function (sum ((a :type int*)
+			     (len :type int))
+			    int)
+		       (let ((sum :type int :init 0))
+			 (dotimes (i len)
+			      (setf sum (+ sum (aref a i))))
+			 (return sum))))))
     (write-source *main-cpp-filename* "c" code)
     (sb-ext:run-program "/usr/bin/clang"
 			`("--target=wasm32"
