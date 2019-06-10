@@ -25,7 +25,8 @@ cl-gen-cpp-wasm
 		       (return (+ b (* a a))))
 	     )))
     (write-source *main-cpp-filename* "c" code)))
-;; clang --target=wasm32 -std=c11 -O3 -flto -nostdlib -Wl,--no-entry -Wl,--export-all -Wl,--lto-O3 -o wasm_01.wasm wasm_01.c
+;; 8MB stack
+;; clang --target=wasm32 -std=c11 -O3 -flto -nostdlib -Wl,--no-entry -Wl,--export-all -Wl,--lto-O3 -Wl,-z,stack-size=$[8 * 1024 * 1024] -o wasm_01.wasm wasm_01.c
 
 ;; clang --target=wasm32 -emit-llvm -c -S wasm_01.c
 ;; llc -march=wasm32 -filetype=obj wasm_01.ll 
