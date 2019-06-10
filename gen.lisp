@@ -13,6 +13,8 @@
 				      ("Hello Clack!"))))
 (defun call-clack-handler (env)
   (funcall *clack-handler* env))
+#+nil
+(clack:stop *clack-server*)
 
 (defparameter *clack-server*
    (clack:clackup #'call-clack-handler))
@@ -20,6 +22,8 @@
 
 (setq cl-who:*attribute-quote-char* #\")
 (setf cl-who::*html-mode* :html5)
+
+
 
 
 (let ((script-str (cl-js-generator::beautify-source
@@ -37,10 +41,10 @@
 	     `(200 (:content-type "text/html; charset=utf-8")
 		   ("<!DOCTYPE html>
 
-<script type="module">
+<script type=\"module\">
   async function init() {
     const { instance } = await WebAssembly.instantiateStreaming(
-      fetch(\"./wasm_10.wasm\")
+      fetch(\"./wasm_01.wasm\")
     );
 
     const jsArray = [1, 2, 3, 4, 5];
@@ -69,6 +73,16 @@
 			 (:body (:h1 "test2")
 				(:script :type "module"
 					 (princ script-str s)))))))))
+	    ((string= "/wasm_01.wasm" path-info)
+	     `(200 (:content-type "application/wasm")
+		   (,(with-open-file 
+			 (s
+			  "/home/martin/stage/cl-gen-cpp-wasm/source/wasm_01.wasm"
+			  :element-type '(unsigned-byte 8)
+			  :direction :input)
+		       (let ((a (make-array (file-length s) :element-type '(unsigned-byte 8))))
+			 (read-sequence a s)
+			 a)))))
 	    (t
 	     `(200 (:content-type "text/html; charset=utf-8")
 		   (,(cl-who:with-html-output-to-string (s)
