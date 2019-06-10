@@ -7,7 +7,7 @@
 
 (defparameter *clack-handler* (lambda (env)
 				(declare (ignorable env))
-				(format t "start-handler")
+				(format t "start-handler~%")
 				
 				`(200 (:content-type "text/plain")
 				      ("Hello Clack!"))))
@@ -30,7 +30,7 @@
   (setf
     *clack-handler*
     (lambda (env)
-      (format t "new-handler ~a" env)
+      (format t "new-handler2 ~a~%" env)
 	(destructuring-bind (&key server-name remote-addr path-info remote-port &allow-other-keys) env
 	  (cond
 	    ((string= "/" path-info)
