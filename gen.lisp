@@ -1,14 +1,38 @@
 (eval-when (:compile-toplevel :execute :load-toplevel)
-  (mapc #'ql:quickload `(;"cl-cpp-generator"
-			 ;"cl-js-generator"
-			 ;"cl-who"
+  (mapc #'ql:quickload `("cl-cpp-generator"
+			 "cl-js-generator"
+			 "cl-who"
 			 "clack")))
 
-(defvar *handler*
+
+(defparameter *clack-handler* (lambda (env)
+				(declare (ignorable env))
+				`(200 (:content-type "text/plain")
+				      ("Hello Clack!"))))
+
+
+
+(defparameter *clack-server*
   (clack:clackup (lambda (env)
-		   (declare (ignorable env))
-		   `(200 (:content-type "text/plain")
-			 ("Hello Clack!")))))
+		   (funcall *clack-handler* env))))
+
+(setq cl-who:*attribute-quote-char* #\")
+(setf cl-who::*html-mode* :html5)
+
+
+(setf
+    *clack-handler*
+      (lambda (env)
+	(destructuring-bind (&key server-name remote-addr path-info remote-port &allow-other-keys) env
+	  (cond
+	    ((string= "/" path-info)
+	     `(200 (:content-type "text/html; charset=utf-8")
+		   (,(cl-who:with-html-output-to-string (s)
+		       (cl-who:htm
+			(:html
+			 (:head (:meta :charset "utf-8"))
+			 (:body (:h1 "test")))))))))
+	 )))
 
 
 (in-package :cl-cpp-generator)
