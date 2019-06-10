@@ -33,9 +33,20 @@ cl-gen-cpp-wasm
 	     (function (foo ((a :type int)
 			     (b :type int))
 			    int)
-		       (return (+ b (* a a))))
-	     )))
-    (write-source *main-cpp-filename* "c" code)))
+		       (return (+ b (* 2 a a)))))))
+    (write-source *main-cpp-filename* "c" code)
+    (sb-ext:run-program "/usr/bin/clang"
+			`("--target=wasm32"
+			  "-std=c11"
+			  "-O3" "-flto" "-nostdlib"
+			  "-Wl,--no-entry"
+			  "-Wl,--export-all"
+			  "-Wl,--lto-O3"
+			  ,(format nil "-Wl,-z,stack-size=~a"
+				   (* 8 1024 1024))
+			  "-o"
+			  "/home/martin/stage/cl-gen-cpp-wasm/source/wasm_01.wasm"
+			  "/home/martin/stage/cl-gen-cpp-wasm/source/wasm_01.c"))))
 ;; 8MB stack
 ;; clang --target=wasm32 -std=c11 -O3 -flto -nostdlib -Wl,--no-entry -Wl,--export-all -Wl,--lto-O3 -Wl,-z,stack-size=$[8 * 1024 * 1024] -o wasm_01.wasm wasm_01.c
 

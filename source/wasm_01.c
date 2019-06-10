@@ -8,4 +8,4 @@ void *malloc(int n) {
     return ((void *)(r));
   }
 }
-int foo(int a, int b) { return (b + (a * a)); }
+int foo(int a, int b) { return (b + (2 * a * a)); }
