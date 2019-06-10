@@ -11,16 +11,18 @@
 				      ("Hello Clack!"))))
 
 
-
 (defparameter *clack-server*
-  (clack:clackup (lambda (env)
-		   (funcall *clack-handler* env))))
+   (clack:clackup (lambda (env)
+		    (funcall *clack-handler* env))))
+
 
 (setq cl-who:*attribute-quote-char* #\")
 (setf cl-who::*html-mode* :html5)
 
 
-(setf
+(let ((script-str (cl-js-generator::beautify-source
+	       `(let-g ((bla 3))))))
+  (setf
     *clack-handler*
       (lambda (env)
 	(destructuring-bind (&key server-name remote-addr path-info remote-port &allow-other-keys) env
@@ -31,8 +33,12 @@
 		       (cl-who:htm
 			(:html
 			 (:head (:meta :charset "utf-8"))
-			 (:body (:h1 "test")))))))))
-	 )))
+			 (:body (:h1 "test2")
+				(:script :type "text/javascript"
+					 (princ script-str s))))))))))
+	  )))
+  )
+
 
 
 (in-package :cl-cpp-generator)
