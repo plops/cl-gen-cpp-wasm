@@ -35,7 +35,34 @@
 	  (cond
 	    ((string= "/" path-info)
 	     `(200 (:content-type "text/html; charset=utf-8")
-		   (,(cl-who:with-html-output-to-string (s)
+		   ("<!DOCTYPE html>
+
+<script type="module">
+  async function init() {
+    const { instance } = await WebAssembly.instantiateStreaming(
+      fetch(\"./wasm_10.wasm\")
+    );
+
+    const jsArray = [1, 2, 3, 4, 5];
+    // Allocate memory for 5 32-bit integers
+    // and return get starting address.
+    const cArrayPointer = instance.exports.malloc(jsArray.length * 4);
+    // Turn that sequence of 32-bit integers
+    // into a Uint32Array, starting at that address.
+    const cArray = new Uint32Array(
+      instance.exports.memory.buffer,
+      cArrayPointer,
+      jsArray.length
+    );
+    // Copy the values from JS to C.
+    cArray.set(jsArray);
+    // Run the function, passing the starting address and length.
+    console.log(instance.exports.sum(cArrayPointer, cArray.length));
+  }
+  init();
+</script>
+"
+      #+nil,(cl-who:with-html-output-to-string (s)
 		       (cl-who:htm
 			(:html
 			 (:head (:meta :charset "utf-8"))
@@ -77,7 +104,7 @@
 			       void*)
 		       (let ((r :type "unsigned int" :init g_bump_pointer)
 			     )
-			 (setf bump_pointer (+ bump_pointer n))
+			 (setf g_bump_pointer (+ g_bump_pointer n))
 			 (return (cast void* r))))
 	     
 	     (function (foo ((a :type int)
