@@ -75,7 +75,12 @@
 					 (princ script-str s)))))))))
 	    ((string= "/wasm_01.wasm" path-info)
 	     `(200 (:content-type "application/wasm"
-				  ;:content-length ,(file-length stream)
+				  ;; https://github.com/fisxoj/clack-static-asset-middleware/blob/master/src/clack-static-asset-middleware.lisp
+					;:content-length ,(file-length stream)
+					;:cache-control "public, max-age=31556926"
+				  ;; accept-encoding is useful to help caches on the way to not mix up gzip and uncompressed data
+				   :vary "Accept-Encoding"  ;; https://www.maxcdn.com/blog/accept-encoding-its-vary-important/ 
+				   ;;:last-modified ,(local-time:format-rfc1123-timestring nil (local-time:universal-to-timestamp (file-write-date file)))
 				  )
 		   #P"/home/martin/stage/cl-gen-cpp-wasm/source/wasm_01.wasm"
 		   #+nil(,(with-open-file 
