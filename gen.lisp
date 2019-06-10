@@ -17,7 +17,7 @@ cl-gen-cpp-wasm
 		     (user-homedir-pathname)))
   (let* ((code
 	  `(with-compilation-unit
-	       (include <stdio.h>)
+	       ;(include <stdio.h>)
 	     
 	     (function (foo ((a :type int)
 			     (b :type int))
@@ -25,3 +25,5 @@ cl-gen-cpp-wasm
 		       (return (+ b (* a a))))
 	     )))
     (write-source *main-cpp-filename* "c" code)))
+;; clang --target=wasm32 -emit-llvm -c -S wasm_01.c
+
