@@ -1,12 +1,21 @@
 (eval-when (:compile-toplevel :execute :load-toplevel)
-  (ql:quickload :cl-cpp-generator))
+  (mapc #'ql:quickload `(;"cl-cpp-generator"
+			 ;"cl-js-generator"
+			 ;"cl-who"
+			 "clack")))
+
+(defvar *handler*
+  (clack:clackup (lambda (env)
+		   (declare (ignorable env))
+		   `(200 (:content-type "text/plain")
+			 ("Hello Clack!")))))
+
+
 (in-package :cl-cpp-generator)
 (defmacro e (&body body)
   `(statements (<< "std::cout" ,@(loop for e in body collect
 				      (cond ((stringp e) `(string ,e))
 					    (t e))) "std::endl")))
-cl-gen-cpp-wasm 
-
 
 
 
