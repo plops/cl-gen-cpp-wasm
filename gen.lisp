@@ -74,10 +74,14 @@
 				(:script :type "module"
 					 (princ script-str s)))))))))
 	    ((string= "/wasm_01.wasm" path-info)
-	     `(200 (:content-type "application/wasm")
-		   (,(with-open-file 
+	     `(200 (:content-type "application/wasm"
+				  ;:content-length ,(file-length stream)
+				  )
+		   #P"/home/martin/stage/cl-gen-cpp-wasm/source/wasm_01.wasm"
+		   #+nil(,(with-open-file 
 			 (s
 			  "/home/martin/stage/cl-gen-cpp-wasm/source/wasm_01.wasm"
+			  
 			  :element-type '(unsigned-byte 8)
 			  :direction :input)
 		       (let ((a (make-array (file-length s) :element-type '(unsigned-byte 8))))
