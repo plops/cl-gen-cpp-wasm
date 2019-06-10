@@ -25,11 +25,14 @@ cl-gen-cpp-wasm
 		       (return (+ b (* a a))))
 	     )))
     (write-source *main-cpp-filename* "c" code)))
+;; clang --target=wasm32 -std=c11 -O3 -flto -nostdlib -Wl,--no-entry -Wl,--export-all -Wl,--lto-O3 -o wasm_01.wasm wasm_01.c
+
 ;; clang --target=wasm32 -emit-llvm -c -S wasm_01.c
 ;; llc -march=wasm32 -filetype=obj wasm_01.ll 
 ;; asm-ld --no-entry --export-all -o wasm_01.wasm wasm_01.o
+
 ;; sudo pacman -S wabt
 ;; wasm-objdump -x wasm_01.o
-
+;; wasm2wat warm_01.wasm
 
 
