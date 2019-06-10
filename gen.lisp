@@ -7,13 +7,15 @@
 
 (defparameter *clack-handler* (lambda (env)
 				(declare (ignorable env))
+				(format t "start-handler")
+				
 				`(200 (:content-type "text/plain")
 				      ("Hello Clack!"))))
-
+(defun call-clack-handler (env)
+  (funcall *clack-handler* env))
 
 (defparameter *clack-server*
-   (clack:clackup (lambda (env)
-		    (funcall *clack-handler* env))))
+   (clack:clackup #'call-clack-handler))
 
 
 (setq cl-who:*attribute-quote-char* #\")
@@ -21,10 +23,14 @@
 
 
 (let ((script-str (cl-js-generator::beautify-source
-	       `(let-g ((bla 3))))))
+		   `(do0
+		     "async "
+		     (def init ()
+		       (return 0))))))
   (setf
     *clack-handler*
-      (lambda (env)
+    (lambda (env)
+      (format t "new-handler ~a" env)
 	(destructuring-bind (&key server-name remote-addr path-info remote-port &allow-other-keys) env
 	  (cond
 	    ((string= "/" path-info)
@@ -34,10 +40,15 @@
 			(:html
 			 (:head (:meta :charset "utf-8"))
 			 (:body (:h1 "test2")
-				(:script :type "text/javascript"
-					 (princ script-str s))))))))))
-	  )))
-  )
+				(:script :type "module"
+					 (princ script-str s)))))))))
+	    (t
+	     `(200 (:content-type "text/html; charset=utf-8")
+		   (,(cl-who:with-html-output-to-string (s)
+		       (cl-who:htm
+			(:html
+			 (:head (:meta :charset "utf-8"))
+			 (:body (:h1 "error")))))))))))))
 
 
 
