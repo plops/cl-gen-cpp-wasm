@@ -3,7 +3,7 @@
 <script type="module">
   async function init() {
     const { instance } = await WebAssembly.instantiateStreaming(
-      fetch("./add.wasm")
+      fetch("/home/martin/stage/cl-gen-cpp-wasm/source/wasm_10.wasm")
     );
 
     const jsArray = [1, 2, 3, 4, 5];
